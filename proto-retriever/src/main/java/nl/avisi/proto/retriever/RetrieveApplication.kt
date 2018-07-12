@@ -1,9 +1,7 @@
 package nl.avisi.proto.retriever
 
 import io.grpc.ManagedChannelBuilder
-import io.grpc.ManagedChannel
 import io.grpc.StatusRuntimeException
-import qrl.GetNodeInfoReq
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
