@@ -9,54 +9,50 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
+data class Connection(val host:String, val port:Int)
+
 class RetrieveApplication
 /** Construct client for accessing RouteGuide server using the existing channel.  */
-internal constructor(private val channel: ManagedChannel) {
-    private val blockingStub: qrl.BaseGrpc.BaseBlockingStub = qrl.BaseGrpc.newBlockingStub(channel)
-
-    /** Construct client connecting to HelloWorld server at `host:port`.  */
-    constructor(host: String, port: Int) : this(ManagedChannelBuilder.forAddress(host, port)
-            // Channels are secure by default (via SSL/TLS). For the example we disable TLS to avoid
-            // needing certificates.
-            .usePlaintext()
-            .build())
-
-    @Throws(InterruptedException::class)
-    fun shutdown() {
-        channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
-    }
+internal constructor(private val connections: List<Connection>) {
 
     fun retrieveProto() {
-        logger.log(Level.INFO, "Will try to retrieve proto")
+        connections.forEach { connection -> if(retrieveProtoFromConnection(connection)) return }
+    }
+
+    fun retrieveProtoFromConnection(connection: Connection): Boolean {
+        logger.log(Level.INFO, "Trying to retrieve proto from node: ${connection.host}:${connection.port}")
+
+        val channel = ManagedChannelBuilder.forAddress(connection.host, connection.port).usePlaintext().build()
+        val blockingStub = qrl.BaseGrpc.newBlockingStub(channel)
+
         val request = qrl.GetNodeInfoReq.getDefaultInstance()
         val response = try {
             blockingStub.getNodeInfo(request)
         } catch (e: StatusRuntimeException) {
             logger.log(Level.WARNING, "RPC failed: {0}", e.status)
-            return
+            return false
+        } finally {
+            channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
         }
+
         val qrlProto = response.grpcProto
         logger.info("proto: ${qrlProto != null}, writing to file now...")
         File("proto-retriever/src/main/proto/qrl.proto").writeText(qrlProto)
+        return true
     }
 
     companion object {
         private val logger = Logger.getLogger(RetrieveApplication::class.java.name)
 
-        /**
-         * Greet server. If provided, the first element of `args` is the name to use in the
-         * greeting.
-         */
         @Throws(Exception::class)
         @JvmStatic
         fun main(args: Array<String>) {
-            val client = RetrieveApplication("mainnet-1.automated.theqrl.org", 19009)
-            try {
-                /* Access a service running on the local machine on port 50051 */
+            val client = RetrieveApplication(listOf(
+                    Connection("mainnet-4.automated.theqrl.org", 19009),
+                    Connection("mainnet-2.automated.theqrl.org", 19009),
+                    Connection("mainnet-3.automated.theqrl.org", 19009),
+                    Connection("mainnet-1.automated.theqrl.org", 19009)))
                 client.retrieveProto()
-            } finally {
-                client.shutdown()
-            }
         }
     }
 }
