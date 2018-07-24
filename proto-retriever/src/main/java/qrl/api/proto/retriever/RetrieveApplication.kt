@@ -1,4 +1,4 @@
-package nl.avisi.proto.retriever
+package qrl.api.proto.retriever
 
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusRuntimeException
@@ -13,8 +13,9 @@ class RetrieveApplication
 /** Construct client for accessing RouteGuide server using the existing channel.  */
 internal constructor(private val connections: List<Connection>) {
 
-    fun retrieveProto() {
-        connections.forEach { connection -> if(retrieveProtoFromConnection(connection)) return }
+    fun retrieveProto(): Boolean {
+        connections.forEach { connection -> if(retrieveProtoFromConnection(connection)) return true }
+        return false
     }
 
     fun retrieveProtoFromConnection(connection: Connection): Boolean {
@@ -35,7 +36,7 @@ internal constructor(private val connections: List<Connection>) {
 
         val qrlProto = response.grpcProto
         logger.info("proto: ${qrlProto != null}, writing to file now...")
-        File("proto-retriever/src/main/proto/qrl.proto").writeText(qrlProto)
+        File("api/src/main/proto/qrl.proto").writeText(qrlProto)
         return true
     }
 
@@ -50,7 +51,9 @@ internal constructor(private val connections: List<Connection>) {
                     Connection("mainnet-2.automated.theqrl.org", 19009),
                     Connection("mainnet-3.automated.theqrl.org", 19009),
                     Connection("mainnet-1.automated.theqrl.org", 19009)))
-                client.retrieveProto()
+            client.retrieveProto()
+            logger.info("Done writing to file")
+            return
         }
     }
 }
