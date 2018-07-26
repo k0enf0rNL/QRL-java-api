@@ -1,4 +1,4 @@
-package qrl.api
+package quantum.resistant.ledger.api
 
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusRuntimeException
@@ -15,7 +15,7 @@ class NodeInfoResource {
 
     companion object {
         private val logger = Logger.getLogger(NodeInfoResource::class.java.name)
-        private val client = Connection("mainnet-1.automated.theqrl.org", 19009)
+        private val client = Connection("testnet-1.automated.theqrl.org", 19009)
     }
 
     @GetMapping("/node")
@@ -37,4 +37,24 @@ class NodeInfoResource {
         val peersList = response.knownPeersList
         return peersList.toString()
     }
+
+//    @GetMapping("/sign")
+//    fun getSign(): String {
+//        logger.log(Level.INFO, "Trying to sign transaction at node: ${client.host}:${client.port}")
+//
+//        val channel = ManagedChannelBuilder.forAddress(client.host, client.port).usePlaintext().build()
+//        val blockingStub = qrl.PublicAPIGrpc.newBlockingStub(channel)
+//
+//        val request = qrl.Qrl.PushTransactionReq.newBuilder().transactionSignedBuilder.setTransactionHash()
+//        val response = try {
+//            blockingStub.getKnownPeers(request)
+//        } catch (e: StatusRuntimeException) {
+//            logger.log(Level.WARNING, "RPC failed: {0}", e.status)
+//            return "Failed"
+//        } finally {
+//            channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
+//        }
+//        val peersList = response.knownPeersList
+//        return peersList.toString()
+//    }
 }

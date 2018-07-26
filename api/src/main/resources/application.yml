@@ -1,0 +1,8 @@
+server:
+  servlet:
+    context-path: /qrl/api/rest
+
+wallet:
+  address: Q01090018a530f6b76e508f84131311dd4240befd32883dba089c4145fa49ae1915e729c22b996a
+  hexseed: 0109006359c321c5f039b12a90f645c86fd23f39c9d3fadf729ee854fdbca7ade4be1ce87764fcb35ede12be0e581d6b78ae06
+  mnemonic-phrase: absorb moses gunman ounce cable goose delay bass move halt silk would double oval stack quartz isle unship font suture policy tale sale soften kin fig refuge unify bat tenant from still kuwait tehran

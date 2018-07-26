@@ -1,4 +1,4 @@
-package qrl.api
+package quantum.resistant.ledger.api
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

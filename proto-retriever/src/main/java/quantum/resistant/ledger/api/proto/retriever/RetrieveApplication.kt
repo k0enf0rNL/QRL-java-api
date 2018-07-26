@@ -1,4 +1,4 @@
-package qrl.api.proto.retriever
+package quantum.resistant.ledger.api.proto.retriever
 
 import io.grpc.ManagedChannelBuilder
 import io.grpc.StatusRuntimeException
@@ -43,14 +43,13 @@ internal constructor(private val connections: List<Connection>) {
     companion object {
         private val logger = Logger.getLogger(RetrieveApplication::class.java.name)
 
-        @Throws(Exception::class)
         @JvmStatic
         fun main(args: Array<String>) {
             val client = RetrieveApplication(listOf(
-                    Connection("mainnet-4.automated.theqrl.org", 19009),
-                    Connection("mainnet-2.automated.theqrl.org", 19009),
-                    Connection("mainnet-3.automated.theqrl.org", 19009),
-                    Connection("mainnet-1.automated.theqrl.org", 19009)))
+                    Connection("testnet-4.automated.theqrl.org", 19009),
+                    Connection("testnet-2.automated.theqrl.org", 19009),
+                    Connection("testnet-3.automated.theqrl.org", 19009),
+                    Connection("testnet-1.automated.theqrl.org", 19009)))
             client.retrieveProto()
             logger.info("Done writing to file")
             return
